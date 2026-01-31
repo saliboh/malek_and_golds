@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GoldPrice;
 use App\Models\Karat;
 use App\Services\ReceiptValueRecalculationService;
+use App\Services\GoldPriceCrawlerService;
 use Illuminate\Http\Request;
 
 class GoldCalculatorController extends Controller
@@ -105,5 +106,20 @@ class GoldCalculatorController extends Controller
         }
 
         return redirect('/admin')->with('success', $message);
+    }
+
+    /**
+     * Fetch market gold price from goldpricez.com (display only, does not override daily price)
+     */
+    public function fetchGoldPrice(Request $request)
+    {
+        $crawler = new GoldPriceCrawlerService();
+        $marketPrice = $crawler->fetchMarketGoldPrice();
+
+        if ($marketPrice === null) {
+            return back()->with('error', 'Failed to fetch market gold price from goldpricez.com');
+        }
+
+        return back()->with('marketPrice', $marketPrice['price']);
     }
 }

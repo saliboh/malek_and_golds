@@ -75,6 +75,20 @@
                 </div>
             @endif
 
+            <!-- Market Price Display (From Web) -->
+            @if (session('marketPrice'))
+                <div class="mb-6 bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-400 rounded-2xl p-6 shadow-lg">
+                    <p class="text-orange-800 text-sm font-semibold mb-2 flex items-center gap-2">
+                        <span class="text-lg">📈</span> MARKET RATE (Live from goldpricez.com)
+                    </p>
+                    <div class="flex items-baseline gap-2 mb-3">
+                        <span class="text-4xl font-bold text-orange-600">₱{{ number_format(session('marketPrice'), 2) }}</span>
+                        <span class="text-sm text-orange-600 font-semibold">/gram</span>
+                    </div>
+                    <p class="text-xs text-orange-600">🔗 Reference only - does not affect your daily price below</p>
+                </div>
+            @endif
+
             <!-- Current Price Display -->
             @if ($todayPrice)
                 <div class="mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 border-2 border-blue-400 rounded-2xl p-6 shadow-lg">
@@ -94,6 +108,24 @@
                     <p class="text-yellow-700 text-sm">Enter today's gold price below to get started</p>
                 </div>
             @endif
+
+            <!-- Fetch Market Gold Price from Web -->
+            <div class="mb-6 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-400 rounded-2xl p-6 shadow-lg">
+                <p class="text-purple-800 text-sm font-semibold mb-3 flex items-center gap-2">
+                    <span class="text-lg">🌐</span> Check Market Price
+                </p>
+                <p class="text-purple-700 text-sm mb-4">View the current market gold price from goldpricez.com for reference. This does NOT change your daily price below.</p>
+                <form action="{{ route('fetch-gold-price') }}" method="POST" class="inline">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-4 rounded-xl transition transform active:scale-95 shadow-lg"
+                    >
+                        📊 Check Market Rate
+                    </button>
+                </form>
+                <p class="text-xs text-purple-600 mt-2">Source: <a href="https://goldpricez.com/ph/gram" target="_blank" class="underline hover:text-purple-800">goldpricez.com/ph/gram</a></p>
+            </div>
 
             <!-- Input Form -->
             <form action="/admin/gold-prices" method="POST" class="space-y-4">

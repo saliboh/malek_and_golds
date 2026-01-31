@@ -16,6 +16,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/calculate', [GoldCalculatorController::class, 'calculate']);
     Route::get('/admin', [GoldCalculatorController::class, 'admin']);
     Route::post('/admin/gold-prices', [GoldCalculatorController::class, 'storePrice']);
+    Route::post('/admin/fetch-gold-price', [GoldCalculatorController::class, 'fetchGoldPrice'])->name('fetch-gold-price');
 
     // Receipt Buying Routes
     Route::prefix('receipts')->name('receipts.')->group(function () {
