@@ -70,11 +70,25 @@
 
             <!-- OFFER RANGE - Prominently Displayed -->
             @if ($receipt->status === 'pending' || $receipt->status === 'offered')
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl shadow-xl p-8 mb-6 border-4 border-green-400">
+            @php
+                $offerRange = $receipt->profit_margin;
+                $isNegative = $offerRange < 0;
+                $currentOffer = $receipt->final_buying_price ?? 0;
+                $profitAtCurrentOffer = $receipt->total_item_value - $receipt->lukat_fee - $currentOffer;
+                $hasNegativeProfit = $profitAtCurrentOffer < 0;
+            @endphp
+            <div class="bg-gradient-to-r {{ $isNegative ? 'from-red-50 to-rose-50' : 'from-green-50 to-emerald-50' }} rounded-2xl shadow-xl p-8 mb-6 border-4 {{ $isNegative ? 'border-red-400' : 'border-green-400' }}">
                 <div class="text-center">
-                    <p class="text-sm text-green-700 font-bold uppercase tracking-widest mb-3">💰 Offer Range</p>
-                    <p class="text-5xl font-black text-green-600 mb-2">₱{{ number_format($receipt->profit_margin, 0) }}</p>
-                    <p class="text-sm text-gray-700">Maximum you can offer without losing money</p>
+                    <p class="text-sm {{ $isNegative ? 'text-red-700' : 'text-green-700' }} font-bold uppercase tracking-widest mb-3">💰 Offer Range</p>
+                    <p class="text-5xl font-black {{ $isNegative ? 'text-red-600' : 'text-green-600' }} mb-2">₱{{ number_format($offerRange, 0) }}</p>
+                    <p class="text-sm text-gray-700 mb-3">{{ $isNegative ? 'Loss - Lukat fee exceeds gold value' : 'Maximum you can offer without losing money' }}</p>
+
+                    @if ($hasNegativeProfit)
+                    <div class="bg-red-100 border-2 border-red-400 rounded-lg p-3 mt-4">
+                        <p class="text-sm font-bold text-red-700">⚠️ WARNING: Negative Profit</p>
+                        <p class="text-xs text-red-600 mt-1">This transaction will result in a loss of ₱{{ number_format(abs($profitAtCurrentOffer), 0) }}</p>
+                    </div>
+                    @endif
                 </div>
             </div>
             @elseif ($receipt->status === 'completed')
@@ -156,6 +170,20 @@
 
                     <!-- Status-Based Details (Additional Info) -->
                     @if ($receipt->status === 'pending' || $receipt->status === 'offered')
+                        <!-- Profit Based on Current or Zero Offer -->
+                        @php
+                            $currentOffer = $receipt->final_buying_price ?? 0;
+                            $profitAtCurrentOffer = $receipt->total_item_value - $receipt->lukat_fee - $currentOffer;
+                        @endphp
+                        <div class="flex justify-between items-center p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                            <div>
+                                <p class="text-sm text-gray-700 font-semibold">Profit at Current Offer</p>
+                                <p class="text-xs text-gray-600">Gold Value - Lukat - Your Offer (or ₱0)</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold {{ $profitAtCurrentOffer < 0 ? 'text-red-600' : 'text-orange-600' }}">₱{{ number_format($profitAtCurrentOffer, 0) }}</p>
+                            </div>
+                        </div>
 
                         @if ($receipt->final_buying_price)
                         <div class="flex justify-between items-center p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
