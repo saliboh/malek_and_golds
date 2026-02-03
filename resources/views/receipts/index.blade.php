@@ -14,16 +14,18 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 via-white to-pink-50 safe-area-top safe-area-bottom">
-    <div class="min-h-screen flex flex-col">
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        <!-- Global Navigation -->
+        @include('layouts.navigation')
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col">
         <!-- Header -->
         <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white sticky top-0 z-10 shadow-lg">
             <div class="px-4 safe-area-left safe-area-right py-5">
                 <div class="flex items-center justify-between mb-2">
                     <h1 class="text-2xl lg:text-3xl font-bold">💎 Receipts</h1>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg">🚪</button>
-                    </form>
+                    <span class="text-sm text-purple-100">Manage pawned gold</span>
                 </div>
                 <p class="text-purple-100 text-sm">Manage pawned gold receipts</p>
             </div>

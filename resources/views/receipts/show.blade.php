@@ -14,16 +14,18 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-green-50 via-white to-emerald-50 safe-area-top safe-area-bottom">
-    <div class="min-h-screen flex flex-col">
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        <!-- Global Navigation -->
+        @include('layouts.navigation')
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col">
         <!-- Header -->
         <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white sticky top-0 z-10 shadow-lg">
             <div class="px-4 safe-area-left safe-area-right py-5">
                 <div class="flex items-center justify-between mb-2">
                     <h1 class="text-2xl lg:text-3xl font-bold">💎 Receipt Evaluation</h1>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg">🚪</button>
-                    </form>
+                    <span class="text-sm text-green-100">View & manage</span>
                 </div>
                 <p class="text-green-100 text-sm">Receipt #{{ $receipt->receipt_number }}</p>
             </div>

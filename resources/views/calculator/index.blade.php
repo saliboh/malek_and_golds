@@ -61,28 +61,18 @@
 </head>
 <body class="bg-gradient-to-br from-yellow-50 via-white to-amber-50 safe-area-top safe-area-bottom">
     <div class="min-h-screen flex flex-col lg:flex-row">
+        <!-- Global Navigation -->
+        @include('layouts.navigation')
+
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col lg:border-r lg:border-gray-200">
+        <div class="flex-1 flex flex-col">
             <!-- Header -->
             <div class="bg-gradient-to-r from-amber-600 to-yellow-500 text-white sticky top-0 z-10 shadow-lg">
                 <div class="px-4 safe-area-left safe-area-right py-5">
-                    <div class="flex items-center justify-between mb-3">
-                        <h1 class="text-2xl lg:text-3xl font-bold tracking-tight">💎 Malek & Golds</h1>
-                        <div class="flex items-center gap-2">
-                            <a href="/receipts" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg transition">
-                                📋 Receipts
-                            </a>
-                            <a href="/admin" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg transition">
-                                ⚙️
-                            </a>
-                            <form action="{{ route('logout') }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg transition">
-                                    🚪 Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                <div class="flex items-center justify-between mb-3">
+                    <h1 class="text-2xl lg:text-3xl font-bold tracking-tight">💎 Malek & Golds</h1>
+                    <span class="text-sm text-amber-100">Calculator</span>
+                </div>
                     <p class="text-amber-100 text-sm">Gold Price Calculator - Fast & Accurate Pricing</p>
                 </div>
 

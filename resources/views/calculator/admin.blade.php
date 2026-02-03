@@ -29,23 +29,18 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 safe-area-top safe-area-bottom">
-    <div class="min-h-screen flex flex-col">
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        <!-- Global Navigation -->
+        @include('layouts.navigation')
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col">
         <!-- Header -->
         <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white sticky top-0 z-10 shadow-lg">
             <div class="px-4 py-6">
                 <div class="flex items-center justify-between mb-3">
-                    <h1 class="text-2xl lg:text-3xl font-bold tracking-tight">💎 Malek & Golds - Admin</h1>
-                    <div class="flex items-center gap-2">
-                        <a href="/" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg transition flex items-center gap-1">
-                            ← Back
-                        </a>
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="text-sm bg-black/20 hover:bg-black/30 px-3 py-2 rounded-lg transition">
-                                🚪 Logout
-                            </button>
-                        </form>
-                    </div>
+                    <h1 class="text-2xl lg:text-3xl font-bold tracking-tight">💎 Admin Panel</h1>
+                    <span class="text-sm text-blue-100">Manage Gold Prices</span>
                 </div>
                 <p class="text-blue-100 text-sm">Manage Daily Gold Prices</p>
             </div>
