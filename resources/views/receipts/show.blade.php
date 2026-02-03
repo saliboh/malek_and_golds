@@ -39,7 +39,10 @@
             @endif
 
             <!-- Edit Toggle Button -->
-            <div class="mb-4 flex justify-end gap-2">
+            <div class="mb-4 flex justify-end gap-2 flex-wrap">
+                <a href="{{ route('receipts.printable', $receipt) }}" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                    👁️ View Shareable
+                </a>
                 <button type="button" onclick="toggleEditMode()" id="editToggleBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
                     ✏️ Edit
                 </button>

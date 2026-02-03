@@ -28,6 +28,7 @@ class ReceiptController extends Controller
             'owner_name' => 'required|string|max:255',
             'owner_contact' => 'nullable|string|max:20',
             'pawn_shop_name' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
             'items' => 'required|json',
             'lukat_fee' => 'required|numeric|min:0',
         ]);
@@ -46,6 +47,7 @@ class ReceiptController extends Controller
             'owner_name' => $validated['owner_name'],
             'owner_contact' => $validated['owner_contact'],
             'pawn_shop_name' => $validated['pawn_shop_name'],
+            'address' => $validated['address'] ?? null,
             'items' => $items,
             'lukat_fee' => $validated['lukat_fee'],
             'total_item_value' => 0, // Will be calculated next
@@ -201,5 +203,16 @@ class ReceiptController extends Controller
         $receipt->delete();
 
         return redirect()->route('receipts.index')->with('success', "Receipt {$receiptNumber} deleted successfully!");
+    }
+
+    /**
+     * Show a readonly shareable view of receipt for printing/sharing
+     */
+    public function printable(Receipt $receipt)
+    {
+        $breakdown = $receipt->getBreakdown();
+        $karats = Karat::orderBy('karat_value', 'desc')->get();
+        $todayGoldPrice = GoldPrice::whereDate('date', today())->first();
+        return view('receipts.printable', compact('receipt', 'breakdown', 'karats', 'todayGoldPrice'));
     }
 }

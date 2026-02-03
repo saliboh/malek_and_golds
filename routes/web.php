@@ -10,6 +10,9 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Guest Accessible Routes
+Route::get('/receipts/{receipt}/printable', [ReceiptController::class, 'printable'])->name('receipts.printable');
+
 // Protected Routes - Calculator and Admin
 Route::middleware('auth')->group(function () {
     Route::get('/', [GoldCalculatorController::class, 'index']);

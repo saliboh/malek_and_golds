@@ -53,6 +53,7 @@
                         <input type="text" name="owner_name" placeholder="Owner Name" class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500" required>
                         <input type="tel" name="owner_contact" placeholder="Contact (optional)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500">
                         <input type="text" name="pawn_shop_name" placeholder="Pawn Shop Name (optional)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500">
+                        <textarea name="address" placeholder="Address (optional)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 resize-none" rows="2"></textarea>
                     </div>
                 </div>
 
