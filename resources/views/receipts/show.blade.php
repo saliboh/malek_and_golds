@@ -53,6 +53,12 @@
                     @method('PUT')
                     <input type="hidden" name="items" id="updateItemsInput">
                     <input type="hidden" name="lukat_fee" id="updateLukatFeeInput">
+                    <input type="hidden" name="owner_name" id="updateOwnerNameInput">
+                    <input type="hidden" name="owner_contact" id="updateOwnerContactInput">
+                    <input type="hidden" name="pawn_shop_name" id="updatePawnShopNameInput">
+                    <input type="hidden" name="address" id="updateAddressInput">
+                    <input type="hidden" name="source" id="updateSourceInput">
+                    <input type="hidden" name="note" id="updateNoteInput">
                     <button type="submit" id="saveBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
                         💾 Save Changes
                     </button>
@@ -60,6 +66,82 @@
                 <button type="button" onclick="cancelEditMode()" id="cancelBtn" style="display: none;" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-semibold">
                     ❌ Cancel
                 </button>
+            </div>
+
+            <!-- Receipt Info (Editable) -->
+            <div class="bg-white rounded-xl shadow p-6 mb-6 space-y-4">
+                <h2 class="font-bold text-lg">📝 Receipt Info</h2>
+
+                <!-- Display Mode -->
+                <div id="receiptInfoDisplay" class="space-y-2 text-sm">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-500 font-semibold">Receipt #</span>
+                        <span class="font-bold">{{ $receipt->receipt_number }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-500 font-semibold">👤 Owner</span>
+                        <span class="font-bold">{{ $receipt->owner_name }}</span>
+                    </div>
+                    @if ($receipt->owner_contact)
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-500 font-semibold">📞 Contact</span>
+                        <span>{{ $receipt->owner_contact }}</span>
+                    </div>
+                    @endif
+                    @if ($receipt->pawn_shop_name)
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-500 font-semibold">🏪 Pawn Shop</span>
+                        <span>{{ $receipt->pawn_shop_name }}</span>
+                    </div>
+                    @endif
+                    @if ($receipt->address)
+                    <div class="p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-500 font-semibold">📍 Address</span>
+                        <p class="mt-1">{{ $receipt->address }}</p>
+                    </div>
+                    @endif
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-500 font-semibold">📌 Source</span>
+                        <span class="font-semibold {{ $receipt->source === 'Resibo Lang' ? 'text-orange-600' : 'text-blue-600' }}">{{ $receipt->source ?? 'Malek & Golds' }}</span>
+                    </div>
+                    @if ($receipt->note)
+                    <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <span class="text-gray-500 font-semibold">📝 Note</span>
+                        <p class="mt-1 text-sm text-gray-700 whitespace-pre-wrap">{{ $receipt->note }}</p>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Edit Mode -->
+                <div id="receiptInfoEditMode" style="display: none;" class="space-y-3">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 uppercase">Owner Name *</label>
+                        <input type="text" id="editOwnerName" value="{{ $receipt->owner_name }}" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 uppercase">Contact (Optional)</label>
+                        <input type="tel" id="editOwnerContact" value="{{ $receipt->owner_contact }}" placeholder="e.g., +63 912 345 6789" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 uppercase">Pawn Shop Name (Optional)</label>
+                        <input type="text" id="editPawnShopName" value="{{ $receipt->pawn_shop_name }}" placeholder="e.g., Malek Pawn" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 uppercase">📍 Address (Optional)</label>
+                        <textarea id="editAddress" placeholder="e.g., 123 Main Street, Downtown" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-sm" rows="2">{{ $receipt->address }}</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 uppercase">📌 Source *</label>
+                        <select id="editSource" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white">
+                            <option value="Malek &amp; Golds" {{ ($receipt->source ?? 'Malek & Golds') === 'Malek & Golds' ? 'selected' : '' }}>Malek &amp; Golds</option>
+                            <option value="Resibo Lang" {{ ($receipt->source ?? '') === 'Resibo Lang' ? 'selected' : '' }}>Resibo Lang</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 uppercase">📝 Note (Optional)</label>
+                        <textarea id="editNote" placeholder="e.g., For delivery rider: call before arrival..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-sm" rows="3">{{ $receipt->note }}</textarea>
+                    </div>
+                </div>
             </div>
 
             <!-- Gold Items (Editable) -->
@@ -182,9 +264,14 @@
                 @endif
 
                 @if ($receipt->status === 'offered' && $receipt->final_buying_price)
-                <div class="p-4 bg-blue-50 rounded-lg border-2 border-blue-300">
+                <div class="p-4 bg-blue-50 rounded-lg border-2 border-blue-300 space-y-3">
                     <p class="text-sm text-gray-600">Current Offer</p>
-                    <p class="text-2xl font-bold text-blue-600 mb-3">₱{{ number_format($receipt->final_buying_price, 0) }}</p>
+                    <p class="text-2xl font-bold text-blue-600 mb-1">₱{{ number_format($receipt->final_buying_price, 0) }}</p>
+
+                    <a href="{{ route('receipts.rider', $receipt) }}" target="_blank"
+                       class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 rounded-lg transition shadow-md">
+                        🛵 Request Rider
+                    </a>
 
                     <form action="{{ route('receipts.accept', $receipt) }}" method="POST">
                         @csrf
@@ -257,6 +344,8 @@
             const itemsEditMode = document.getElementById('itemsEditMode');
             const lukatDisplay = document.getElementById('lukatDisplay');
             const lukatEditMode = document.getElementById('lukatEditMode');
+            const receiptInfoDisplay = document.getElementById('receiptInfoDisplay');
+            const receiptInfoEditMode = document.getElementById('receiptInfoEditMode');
 
             if (isEditMode) {
                 // Switch to edit mode
@@ -264,6 +353,8 @@
                 itemsEditMode.style.display = 'block';
                 lukatDisplay.style.display = 'none';
                 lukatEditMode.style.display = 'block';
+                receiptInfoDisplay.style.display = 'none';
+                receiptInfoEditMode.style.display = 'block';
                 btn.style.display = 'none';
                 saveBtn.parentElement.style.display = 'inline-block';
                 cancelBtn.style.display = 'inline-block';
@@ -275,6 +366,8 @@
                 itemsEditMode.style.display = 'none';
                 lukatDisplay.style.display = 'flex';
                 lukatEditMode.style.display = 'none';
+                receiptInfoDisplay.style.display = 'block';
+                receiptInfoEditMode.style.display = 'none';
                 btn.style.display = 'inline-block';
                 saveBtn.parentElement.style.display = 'none';
                 cancelBtn.style.display = 'none';
@@ -306,6 +399,12 @@
 
             document.getElementById('updateItemsInput').value = JSON.stringify(items);
             document.getElementById('updateLukatFeeInput').value = document.getElementById('lukatFeeInput').value;
+            document.getElementById('updateOwnerNameInput').value = document.getElementById('editOwnerName').value;
+            document.getElementById('updateOwnerContactInput').value = document.getElementById('editOwnerContact').value;
+            document.getElementById('updatePawnShopNameInput').value = document.getElementById('editPawnShopName').value;
+            document.getElementById('updateAddressInput').value = document.getElementById('editAddress').value;
+            document.getElementById('updateSourceInput').value = document.getElementById('editSource').value;
+            document.getElementById('updateNoteInput').value = document.getElementById('editNote').value;
         });
 
         function addEditItem() {

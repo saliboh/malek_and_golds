@@ -12,6 +12,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Guest Accessible Routes
 Route::get('/receipts/{receipt}/printable', [ReceiptController::class, 'printable'])->name('receipts.printable');
+Route::get('/receipts/{receipt}/rider', [ReceiptController::class, 'rider'])->name('receipts.rider');
 
 // Protected Routes - Calculator and Admin
 Route::middleware('auth')->group(function () {

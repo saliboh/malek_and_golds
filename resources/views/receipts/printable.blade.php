@@ -54,6 +54,22 @@
                     </div>
                     @endif
 
+                    <!-- Source -->
+                    @if ($receipt->source)
+                    <div class="flex items-center gap-3 bg-white rounded-lg p-3 border border-indigo-100">
+                        <span class="text-xs text-indigo-600 font-bold uppercase tracking-widest">📌 Source</span>
+                        <span class="font-bold {{ $receipt->source === 'Resibo Lang' ? 'text-orange-600' : 'text-blue-700' }}">{{ $receipt->source }}</span>
+                    </div>
+                    @endif
+
+                    <!-- Note -->
+                    @if ($receipt->note)
+                    <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-400">
+                        <p class="text-xs text-yellow-700 font-bold uppercase tracking-widest mb-2">📝 Note</p>
+                        <p class="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{{ $receipt->note }}</p>
+                    </div>
+                    @endif
+
                     <!-- Receipt # and Date -->
                     <div class="grid grid-cols-2 gap-4 pt-4 border-t-2 border-indigo-200">
                         <div>

@@ -29,6 +29,8 @@ class ReceiptController extends Controller
             'owner_contact' => 'nullable|string|max:20',
             'pawn_shop_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
+            'source' => 'required|string|in:Malek & Golds,Resibo Lang',
+            'note' => 'nullable|string|max:1000',
             'items' => 'required|json',
             'lukat_fee' => 'required|numeric|min:0',
         ]);
@@ -48,6 +50,8 @@ class ReceiptController extends Controller
             'owner_contact' => $validated['owner_contact'],
             'pawn_shop_name' => $validated['pawn_shop_name'],
             'address' => $validated['address'] ?? null,
+            'source' => $validated['source'],
+            'note' => $validated['note'] ?? null,
             'items' => $items,
             'lukat_fee' => $validated['lukat_fee'],
             'total_item_value' => 0, // Will be calculated next
@@ -152,6 +156,12 @@ class ReceiptController extends Controller
         $validated = $request->validate([
             'items' => 'required|json',
             'lukat_fee' => 'required|numeric|min:0',
+            'owner_name' => 'required|string|max:255',
+            'owner_contact' => 'nullable|string|max:100',
+            'pawn_shop_name' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'source' => 'required|string|in:Malek & Golds,Resibo Lang',
+            'note' => 'nullable|string|max:1000',
         ]);
 
         // Decode JSON string to array
@@ -166,6 +176,12 @@ class ReceiptController extends Controller
         $receipt->update([
             'items' => $items,
             'lukat_fee' => $validated['lukat_fee'],
+            'owner_name' => $validated['owner_name'],
+            'owner_contact' => $validated['owner_contact'] ?? null,
+            'pawn_shop_name' => $validated['pawn_shop_name'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'source' => $validated['source'],
+            'note' => $validated['note'] ?? null,
         ]);
 
         // Recalculate values
@@ -203,6 +219,14 @@ class ReceiptController extends Controller
         $receipt->delete();
 
         return redirect()->route('receipts.index')->with('success', "Receipt {$receiptNumber} deleted successfully!");
+    }
+
+    /**
+     * Show a readonly rider dispatch page
+     */
+    public function rider(Receipt $receipt)
+    {
+        return view('receipts.rider', compact('receipt'));
     }
 
     /**

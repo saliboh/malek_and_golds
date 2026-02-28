@@ -84,6 +84,19 @@
                                     <label class="text-xs font-semibold text-gray-600 uppercase">📍 Address (Optional)</label>
                                     <textarea name="address" placeholder="e.g., 123 Main Street, Downtown" class="w-full mt-1 px-3 lg:px-4 py-2 lg:py-2.5 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-sm" rows="2"></textarea>
                                 </div>
+
+                                <div>
+                                    <label class="text-xs font-semibold text-gray-600 uppercase">📌 Source *</label>
+                                    <select name="source" class="w-full mt-1 px-3 lg:px-4 py-2 lg:py-2.5 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white" required>
+                                        <option value="Malek &amp; Golds" selected>Malek &amp; Golds</option>
+                                        <option value="Resibo Lang">Resibo Lang</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="text-xs font-semibold text-gray-600 uppercase">📝 Note (Optional)</label>
+                                    <textarea name="note" placeholder="e.g., For delivery rider: call before arrival. Extra details here..." class="w-full mt-1 px-3 lg:px-4 py-2 lg:py-2.5 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-sm" rows="3"></textarea>
+                                </div>
                             </div>
                         </div>
 

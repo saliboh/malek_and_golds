@@ -12,6 +12,8 @@ class Receipt extends Model
         'owner_contact',
         'pawn_shop_name',
         'address',
+        'source',
+        'note',
         'items',
         'lukat_fee',
         'total_item_value',
