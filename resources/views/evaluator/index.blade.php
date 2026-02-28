@@ -109,10 +109,47 @@
                     </button>
                 </div>
                 <!-- Lukat -->
-                <div class="flex items-center gap-2 bg-amber-50 rounded-lg px-3 py-2 border border-amber-200">
-                    <span class="text-xs font-semibold text-amber-700 whitespace-nowrap">Lukat Fee ₱</span>
-                    <input type="number" id="lukat-${id}" placeholder="0" min="0" step="1"
-                        class="flex-1 bg-transparent text-amber-800 font-bold text-sm focus:outline-none placeholder-amber-300 min-w-0">
+                <div class="space-y-2">
+                    <!-- Mode Toggle -->
+                    <div class="flex gap-2">
+                        <button onclick="setLukatMode(${id}, 'manual')" id="lukat-mode-manual-${id}"
+                            class="flex-1 text-xs font-bold py-1.5 rounded-lg border-2 border-amber-400 bg-amber-400 text-white transition">
+                            ✏️ Manual
+                        </button>
+                        <button onclick="setLukatMode(${id}, 'estimate')" id="lukat-mode-estimate-${id}"
+                            class="flex-1 text-xs font-bold py-1.5 rounded-lg border-2 border-amber-200 text-amber-600 bg-white transition">
+                            📅 Estimate
+                        </button>
+                    </div>
+
+                    <!-- Manual Input -->
+                    <div id="lukat-manual-${id}" class="flex items-center gap-2 bg-amber-50 rounded-lg px-3 py-2 border border-amber-200">
+                        <span class="text-xs font-semibold text-amber-700 whitespace-nowrap">Lukat Fee ₱</span>
+                        <input type="number" id="lukat-${id}" placeholder="0" min="0" step="1"
+                            class="flex-1 bg-transparent text-amber-800 font-bold text-sm focus:outline-none placeholder-amber-300 min-w-0">
+                    </div>
+
+                    <!-- Estimate Input -->
+                    <div id="lukat-estimate-${id}" class="hidden bg-amber-50 rounded-lg p-3 border border-amber-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-semibold text-amber-700">📅 Lukat Checkpoints</p>
+                            <button onclick="addCheckpoint(${id})" class="text-xs text-amber-600 font-bold border border-amber-300 px-2 py-0.5 rounded hover:bg-amber-100">+ Add</button>
+                        </div>
+                        <div id="checkpoints-${id}" class="space-y-1.5"></div>
+                        <div class="space-y-1">
+                            <p class="text-xs text-amber-600 font-semibold">Estimate lukat on what date?</p>
+                            <input type="date" id="estimate-date-${id}" value="${new Date().toISOString().split('T')[0]}"
+                                class="w-full px-2 py-1.5 border border-amber-300 rounded-lg text-sm font-bold text-amber-800 focus:outline-none focus:border-amber-500 bg-white">
+                        </div>
+                        <button onclick="estimateLukat(${id})"
+                            class="w-full text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white py-1.5 rounded-lg transition">
+                            ⚡ Compute Estimate
+                        </button>
+                        <div id="lukat-estimate-result-${id}" class="hidden text-center py-2 bg-white rounded-lg border-2 border-amber-300">
+                            <p class="text-xs text-amber-500 font-semibold" id="lukat-estimate-label-${id}">—</p>
+                            <p class="text-xl font-black text-amber-700" id="lukat-estimate-value-${id}">₱0</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -168,6 +205,11 @@
             const label = `Receipt ${idx + 1}`;
             const lukatInput = document.getElementById(`lukat-${receiptId}`);
             const lukat = parseFloat(lukatInput?.value || 0) || 0;
+            const manualDiv = document.getElementById(`lukat-manual-${receiptId}`);
+            const isEstimated = manualDiv ? manualDiv.classList.contains('hidden') : false;
+            const estimatedLabel = isEstimated
+                ? document.getElementById(`lukat-estimate-label-${receiptId}`)?.textContent || 'estimated'
+                : null;
 
             const itemRows = document.querySelectorAll(`#items-${receiptId} > div`);
             const items = [];
@@ -198,7 +240,7 @@
             totalGoldValue += receiptGoldValue;
             totalLukat += lukat;
 
-            receiptResults.push({ label, items, lukat, receiptGoldValue, profit, isLosing: profit < 0 });
+            receiptResults.push({ label, items, lukat, isEstimated, estimatedLabel, receiptGoldValue, profit, isLosing: profit < 0 });
         });
 
         if (hasError) return;
@@ -250,7 +292,7 @@
                         <span class="font-black text-blue-600">₱${fmt(r.receiptGoldValue)}</span>
                     </div>
                     <div class="flex justify-between items-center p-2 bg-amber-50 rounded-lg border-l-4 border-amber-400">
-                        <span class="font-semibold text-gray-700">Lukat Fee</span>
+                        <span class="font-semibold text-gray-700">Lukat Fee ${r.isEstimated ? '<span class="text-xs text-amber-500 font-normal">(estimated)</span>' : ''}</span>
                         <span class="font-black text-amber-600">-₱${fmt(r.lukat)}</span>
                     </div>
                     <div class="flex justify-between items-center p-2.5 rounded-lg border-2 ${r.isLosing ? 'bg-red-50 border-red-400' : 'bg-emerald-50 border-emerald-400'}">
@@ -269,6 +311,135 @@
 
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function setLukatMode(id, mode) {
+        const manualBtn  = document.getElementById(`lukat-mode-manual-${id}`);
+        const estimateBtn = document.getElementById(`lukat-mode-estimate-${id}`);
+        const manualDiv  = document.getElementById(`lukat-manual-${id}`);
+        const estimateDiv = document.getElementById(`lukat-estimate-${id}`);
+
+        if (mode === 'manual') {
+            manualBtn.classList.add('bg-amber-400', 'text-white', 'border-amber-400');
+            manualBtn.classList.remove('bg-white', 'text-amber-600', 'border-amber-200');
+            estimateBtn.classList.remove('bg-amber-400', 'text-white', 'border-amber-400');
+            estimateBtn.classList.add('bg-white', 'text-amber-600', 'border-amber-200');
+            manualDiv.classList.remove('hidden');
+            estimateDiv.classList.add('hidden');
+        } else {
+            estimateBtn.classList.add('bg-amber-400', 'text-white', 'border-amber-400');
+            estimateBtn.classList.remove('bg-white', 'text-amber-600', 'border-amber-200');
+            manualBtn.classList.remove('bg-amber-400', 'text-white', 'border-amber-400');
+            manualBtn.classList.add('bg-white', 'text-amber-600', 'border-amber-200');
+            estimateDiv.classList.remove('hidden');
+            manualDiv.classList.add('hidden');
+            // Add 2 starter checkpoints if empty
+            const container = document.getElementById(`checkpoints-${id}`);
+            if (container.children.length === 0) {
+                addCheckpoint(id);
+                addCheckpoint(id);
+            }
+        }
+    }
+
+    function addCheckpoint(id) {
+        const container = document.getElementById(`checkpoints-${id}`);
+        const cpId = Date.now();
+        const div = document.createElement('div');
+        div.id = `cp-${cpId}`;
+        div.className = 'flex gap-1.5 items-center';
+        div.innerHTML = `
+            <input type="date" class="flex-1 px-2 py-1.5 border border-amber-200 rounded-lg text-xs focus:outline-none focus:border-amber-400 bg-white min-w-0 cp-date">
+            <div class="flex items-center border border-amber-200 rounded-lg bg-white px-2 py-1.5 gap-1 flex-1 min-w-0">
+                <span class="text-xs text-amber-600 font-bold">₱</span>
+                <input type="number" min="0" step="1" placeholder="Amount" class="flex-1 text-xs font-bold text-amber-800 focus:outline-none bg-transparent min-w-0 cp-amount">
+            </div>
+            <button onclick="document.getElementById('cp-${cpId}').remove()" class="text-gray-300 hover:text-red-400 text-lg font-bold leading-none flex-shrink-0">×</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function estimateLukat(id) {
+        const container = document.getElementById(`checkpoints-${id}`);
+        const rows = container.querySelectorAll('[id^="cp-"]');
+
+        const targetDateVal = document.getElementById(`estimate-date-${id}`)?.value;
+        const today = targetDateVal ? new Date(targetDateVal + 'T00:00:00') : new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const points = [];
+        rows.forEach(row => {
+            const dateVal = row.querySelector('.cp-date')?.value;
+            const amtVal  = row.querySelector('.cp-amount')?.value;
+            if (dateVal && amtVal && parseFloat(amtVal) > 0) {
+                points.push({ date: new Date(dateVal), amount: parseFloat(amtVal) });
+            }
+        });
+
+        if (points.length === 0) {
+            alert('Please enter at least one checkpoint (date + amount).');
+            return;
+        }
+
+        // Sort by date ascending
+        points.sort((a, b) => a.date - b.date);
+
+        let estimated;
+
+        if (points.length === 1) {
+            // Only 1 point — use it directly
+            estimated = points[0].amount;
+        } else {
+            // Linear interpolation / extrapolation using the two closest points around today
+            // Find the two points surrounding today
+            let before = null, after = null;
+            for (let i = 0; i < points.length; i++) {
+                if (points[i].date <= today) before = points[i];
+                if (points[i].date >= today && after === null) after = points[i];
+            }
+
+            if (before && after && before.date.getTime() !== after.date.getTime()) {
+                // Interpolate between before and after
+                const totalMs = after.date - before.date;
+                const elapsedMs = today - before.date;
+                const ratio = elapsedMs / totalMs;
+                estimated = before.amount + ratio * (after.amount - before.amount);
+            } else if (before && !after) {
+                // Today is after all points — extrapolate from last two
+                const p1 = points[points.length - 2];
+                const p2 = points[points.length - 1];
+                const daysTotal = (p2.date - p1.date) / 86400000;
+                const daysFromP2 = (today - p2.date) / 86400000;
+                const dailyRate = daysTotal > 0 ? (p2.amount - p1.amount) / daysTotal : 0;
+                estimated = p2.amount + dailyRate * daysFromP2;
+            } else if (!before && after) {
+                // Today is before all points — extrapolate backward from first two
+                const p1 = points[0];
+                const p2 = points[1];
+                const daysTotal = (p2.date - p1.date) / 86400000;
+                const daysToP1 = (p1.date - today) / 86400000;
+                const dailyRate = daysTotal > 0 ? (p2.amount - p1.amount) / daysTotal : 0;
+                estimated = p1.amount - dailyRate * daysToP1;
+            } else {
+                // Same day point exists
+                estimated = before ? before.amount : after.amount;
+            }
+        }
+
+        estimated = Math.max(0, Math.round(estimated));
+
+        // Write into the hidden lukat input so runEvaluate() picks it up
+        const lukatInput = document.getElementById(`lukat-${id}`);
+        lukatInput.value = estimated;
+
+        // Format the target date nicely for display
+        const displayDate = today.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        // Show result
+        const resultEl = document.getElementById(`lukat-estimate-result-${id}`);
+        resultEl.classList.remove('hidden');
+        document.getElementById(`lukat-estimate-label-${id}`).textContent = `Lukat on ${displayDate}`;
+        document.getElementById(`lukat-estimate-value-${id}`).textContent = '₱' + fmt(estimated);
     }
 
     function fmt(n) {
