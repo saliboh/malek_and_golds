@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\EvaluatorController;
 use App\Http\Controllers\GoldCalculatorController;
 use App\Http\Controllers\ReceiptController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin', [GoldCalculatorController::class, 'admin']);
     Route::post('/admin/gold-prices', [GoldCalculatorController::class, 'storePrice']);
     Route::post('/admin/fetch-gold-price', [GoldCalculatorController::class, 'fetchGoldPrice'])->name('fetch-gold-price');
+
+    Route::get('/evaluate', [EvaluatorController::class, 'index'])->name('evaluator');
 
     // Receipt Buying Routes
     Route::prefix('receipts')->name('receipts.')->group(function () {

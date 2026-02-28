@@ -15,6 +15,13 @@
             <span class="text-xs md:text-sm font-semibold hidden md:inline">Receipts</span>
         </a>
 
+        <!-- Evaluator Link -->
+        <a href="/evaluate" class="flex flex-col md:flex-row items-center md:items-center gap-2 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all group
+            {{ request()->is('evaluate*') ? 'bg-emerald-100 text-emerald-700 md:bg-emerald-50 md:border-l-4 md:border-emerald-600' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+            <span class="text-xl md:text-2xl">⚖️</span>
+            <span class="text-xs md:text-sm font-semibold hidden md:inline">Evaluator</span>
+        </a>
+
         <!-- Admin Link -->
         <a href="/admin" class="flex flex-col md:flex-row items-center md:items-center gap-2 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all group
             {{ request()->is('admin*') ? 'bg-blue-100 text-blue-700 md:bg-blue-50 md:border-l-4 md:border-blue-600' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
